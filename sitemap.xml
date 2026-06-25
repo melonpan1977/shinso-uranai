@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# 重要ページ
+Allow: /
+Allow: /about
+Allow: /privacy
+Allow: /terms
+
+# クロール頻度の最適化
+Crawl-delay: 1
+
+Sitemap: https://shinso-uranai.jp/sitemap.xml
