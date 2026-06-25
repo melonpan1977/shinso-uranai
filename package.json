@@ -2,7 +2,7 @@
   "name": "shinso-uranai",
   "version": "1.0.0",
   "description": "心占SHINSO - AI占いサービス",
-  "engines": { "node": "18.x" },
+  "engines": { "node": "20.x" },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",
     "stripe": "^14.0.0"
