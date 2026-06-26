@@ -1,34 +1,568 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>退会・解約のご案内｜心占SHINSO</title>
+<meta name="description" content="心占SHINSOの退会・解約手続きページ。プランの解約とアカウントの完全削除について、わかりやすくご案内します。">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://shinso-uranai.jp/withdraw">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Noto+Sans+JP:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:#04040c; --surface:#0f0f28; --lift:#16163a;
+  --border:rgba(255,255,255,0.07); --border-gold:rgba(180,145,60,0.3);
+  --washi:#ede8df; --mist:#6b7a8d; --ghost:rgba(237,232,223,0.4);
+  --gold:#b8912c; --gold-mid:#d4aa48; --gold-hi:#f0d070;
+  --crimson:#7a2020; --rose:#b05050; --jade:#2a7a68;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--void);color:var(--washi);font-family:'Noto Sans JP',sans-serif;
+  font-weight:300;-webkit-font-smoothing:antialiased;line-height:1.8;}
 
-  <url>
-    <loc>https://shinso-uranai.jp/</loc>
-    <lastmod>2025-06-10</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="ja" href="https://shinso-uranai.jp/"/>
-  </url>
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(4,4,12,0.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;height:56px;}
+.nav-brand{font-family:'Noto Serif JP',serif;font-weight:700;font-size:1.1rem;
+  background:linear-gradient(135deg,#f0d070,#b8912c);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  text-decoration:none;}
+.nav-links{display:flex;gap:1.5rem;align-items:center;}
+.nav-link{font-size:0.78rem;color:var(--mist);text-decoration:none;letter-spacing:0.1em;transition:color 0.2s;}
+.nav-link:hover{color:var(--gold);}
+.nav-link.active{color:var(--gold);}
 
-  <url>
-    <loc>https://shinso-uranai.jp/about</loc>
-    <lastmod>2025-06-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
+/* HERO */
+.page-hero{padding:8rem 2rem 3rem;text-align:center;
+  background:radial-gradient(ellipse at 50% 0%,rgba(122,32,32,0.07) 0%,transparent 60%);}
+.page-eyebrow{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:0.78rem;letter-spacing:0.4em;color:var(--mist);
+  display:block;margin-bottom:1rem;text-transform:uppercase;}
+.page-title{font-family:'Noto Serif JP',serif;font-weight:700;
+  font-size:clamp(1.8rem,5vw,2.4rem);color:var(--washi);
+  margin-bottom:0.8rem;line-height:1.3;}
+.page-lead{font-size:0.88rem;color:var(--ghost);line-height:2;
+  max-width:480px;margin:0 auto;}
 
-  <url>
-    <loc>https://shinso-uranai.jp/privacy</loc>
-    <lastmod>2025-06-10</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
+/* WRAP */
+.wrap{max-width:680px;margin:0 auto;padding:0 1.5rem 5rem;}
 
-  <url>
-    <loc>https://shinso-uranai.jp/terms</loc>
-    <lastmod>2025-06-10</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
+/* STEP NAV */
+.step-nav{display:flex;align-items:center;margin-bottom:3rem;gap:0;justify-content:center;}
+.step{display:flex;flex-direction:column;align-items:center;gap:0.4rem;position:relative;}
+.step-circle{width:36px;height:36px;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,0.15);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:0.9rem;color:var(--mist);
+  transition:all 0.4s;}
+.step.active .step-circle{border-color:var(--gold);color:var(--gold);
+  background:rgba(180,145,44,0.1);}
+.step.done .step-circle{border-color:var(--jade);background:rgba(42,122,104,0.15);color:var(--jade);}
+.step-label{font-size:0.65rem;color:var(--mist);letter-spacing:0.1em;white-space:nowrap;}
+.step.active .step-label{color:var(--gold);}
+.step-line{width:60px;height:1px;background:rgba(255,255,255,0.1);
+  margin:0 0.3rem;margin-bottom:1.4rem;flex-shrink:0;}
 
-</urlset>
+/* CARDS */
+.card{background:linear-gradient(160deg,rgba(22,22,58,0.85),rgba(8,8,24,0.92));
+  border:1px solid var(--border);border-radius:10px;padding:2rem;
+  margin-bottom:1.2rem;transition:border-color 0.3s;}
+.card-title{font-family:'Noto Serif JP',serif;font-size:1.05rem;
+  color:var(--washi);margin-bottom:0.6rem;display:flex;align-items:center;gap:0.6rem;}
+.card-desc{font-size:0.82rem;color:var(--ghost);line-height:1.9;margin-bottom:1.2rem;}
+
+/* CALLOUT */
+.callout{border-radius:8px;padding:1.1rem 1.3rem;margin:1rem 0;
+  display:flex;align-items:flex-start;gap:0.8rem;font-size:0.82rem;line-height:1.9;}
+.callout.info{background:rgba(42,122,104,0.1);border:1px solid rgba(42,122,104,0.25);}
+.callout.warn{background:rgba(122,32,32,0.1);border:1px solid rgba(122,32,32,0.3);}
+.callout.gold{background:rgba(180,145,44,0.08);border:1px solid rgba(180,145,44,0.25);}
+.callout-ico{font-size:1.1rem;flex-shrink:0;}
+.callout-body{color:rgba(237,232,223,0.75);}
+.callout-body strong{color:var(--washi);}
+.callout-body a{color:var(--gold-mid);text-decoration:none;border-bottom:1px solid rgba(212,170,72,0.3);}
+
+/* CHOICE CARDS */
+.choice-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.choice-card{border:1.5px solid var(--border);border-radius:8px;padding:1.4rem;
+  cursor:pointer;transition:all 0.25s;text-align:center;}
+.choice-card:hover{border-color:rgba(180,145,44,0.3);background:rgba(180,145,44,0.04);}
+.choice-card.selected{border-color:var(--gold-mid);background:rgba(180,145,44,0.08);}
+.choice-card.danger-card:hover{border-color:rgba(176,80,80,0.4);background:rgba(122,32,32,0.06);}
+.choice-card.danger-card.selected{border-color:var(--rose);background:rgba(122,32,32,0.1);}
+.cc-ico{font-size:1.8rem;margin-bottom:0.5rem;}
+.cc-title{font-family:'Noto Serif JP',serif;font-size:0.92rem;color:var(--washi);margin-bottom:0.3rem;}
+.cc-desc{font-size:0.72rem;color:var(--mist);line-height:1.7;}
+
+/* REASON */
+.reason-list{display:grid;gap:0.5rem;margin-bottom:1.2rem;}
+.reason-item{display:flex;align-items:center;gap:0.7rem;
+  padding:0.8rem 1rem;border:1px solid var(--border);border-radius:6px;
+  cursor:pointer;font-size:0.84rem;color:var(--mist);transition:all 0.2s;}
+.reason-item:hover{border-color:rgba(180,145,44,0.3);color:var(--washi);}
+.reason-item.selected{border-color:var(--gold);color:var(--washi);background:rgba(180,145,44,0.06);}
+.reason-radio{width:16px;height:16px;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,0.2);flex-shrink:0;
+  transition:all 0.2s;position:relative;}
+.reason-item.selected .reason-radio{border-color:var(--gold);background:var(--gold);}
+.reason-item.selected .reason-radio::after{content:'';position:absolute;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  width:6px;height:6px;border-radius:50%;background:var(--void);}
+
+/* TEXTAREA */
+textarea{width:100%;background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.1);border-radius:6px;
+  color:var(--washi);padding:0.9rem 1rem;
+  font-family:'Noto Sans JP',sans-serif;font-size:0.85rem;
+  outline:none;resize:vertical;min-height:90px;line-height:1.8;
+  transition:border-color 0.2s;}
+textarea:focus{border-color:var(--gold);background:rgba(180,145,44,0.04);}
+textarea::placeholder{color:rgba(107,122,141,0.6);}
+
+/* CONFIRM BOX */
+.confirm-box{background:rgba(122,32,32,0.08);border:1px solid rgba(176,80,80,0.25);
+  border-radius:8px;padding:1.5rem;margin-bottom:1.5rem;}
+.confirm-row{display:flex;justify-content:space-between;align-items:center;
+  padding:0.5rem 0;font-size:0.83rem;border-bottom:1px solid rgba(255,255,255,0.05);}
+.confirm-row:last-child{border-bottom:none;}
+.confirm-key{color:var(--mist);}
+.confirm-val{color:var(--washi);font-weight:400;}
+.confirm-val.danger{color:var(--rose);}
+
+/* CHECKBOX */
+.check-row{display:flex;align-items:flex-start;gap:0.8rem;
+  padding:0.8rem 0;font-size:0.82rem;color:rgba(237,232,223,0.7);
+  cursor:pointer;line-height:1.7;}
+.custom-check{width:18px;height:18px;border-radius:3px;
+  border:1.5px solid rgba(255,255,255,0.2);flex-shrink:0;margin-top:1px;
+  transition:all 0.2s;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;}
+.custom-check.checked{background:var(--rose);border-color:var(--rose);}
+.custom-check.checked::after{content:'✓';color:#fff;font-size:0.7rem;}
+
+/* BUTTONS */
+.btn-danger{display:block;width:100%;padding:1rem;
+  background:linear-gradient(135deg,#5a1010,#8a2020);
+  color:var(--washi);border:none;border-radius:4px;
+  font-family:'Noto Serif JP',serif;font-size:0.95rem;letter-spacing:0.1em;
+  cursor:pointer;transition:all 0.2s;
+  box-shadow:0 0 20px rgba(122,32,32,0.3);}
+.btn-danger:hover{box-shadow:0 0 35px rgba(122,32,32,0.6);transform:translateY(-1px);}
+.btn-danger:disabled{opacity:0.3;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-safe{display:block;width:100%;padding:1rem;
+  background:linear-gradient(135deg,#1a3a1a,#2a5a2a);
+  color:var(--washi);border:none;border-radius:4px;
+  font-family:'Noto Serif JP',serif;font-size:0.95rem;letter-spacing:0.1em;
+  cursor:pointer;transition:all 0.2s;
+  box-shadow:0 0 20px rgba(42,90,42,0.3);}
+.btn-safe:hover{box-shadow:0 0 35px rgba(42,90,42,0.5);transform:translateY(-1px);}
+.btn-ghost{display:block;width:100%;padding:0.8rem;
+  background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:4px;
+  color:var(--mist);font-size:0.82rem;cursor:pointer;transition:all 0.2s;margin-top:0.6rem;}
+.btn-ghost:hover{color:var(--washi);border-color:rgba(255,255,255,0.25);}
+
+/* COMPLETE */
+.complete-view{text-align:center;padding:3rem 1.5rem;}
+.complete-ico{font-size:3.5rem;margin-bottom:1.2rem;display:block;}
+.complete-title{font-family:'Noto Serif JP',serif;font-size:1.5rem;
+  color:var(--washi);margin-bottom:0.8rem;}
+.complete-msg{font-size:0.85rem;color:var(--ghost);line-height:2;margin-bottom:2rem;}
+.btn-return{display:inline-block;padding:0.85rem 2.5rem;
+  background:linear-gradient(135deg,#1a1a4e,#2a2a6e);
+  color:var(--washi);text-decoration:none;border-radius:4px;
+  font-family:'Noto Serif JP',serif;font-size:0.9rem;letter-spacing:0.1em;
+  border:1px solid rgba(180,145,44,0.3);transition:all 0.2s;}
+.btn-return:hover{border-color:var(--gold);box-shadow:0 0 20px rgba(180,145,44,0.15);}
+
+/* PAGE SECTIONS */
+.pg-section{display:none;}
+.pg-section.active{display:block;animation:fadeUp 0.5s ease forwards;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.ft{border-top:1px solid var(--border);padding:2rem 1.5rem;text-align:center;
+  font-size:0.68rem;color:rgba(255,255,255,0.2);line-height:2.2;}
+.ft-brand{font-family:'Noto Serif JP',serif;font-size:0.9rem;
+  color:rgba(180,145,44,0.3);margin-bottom:0.3rem;}
+.ft-links a{color:rgba(255,255,255,0.25);text-decoration:none;margin:0 0.5rem;}
+
+@media(max-width:520px){
+  .nav{padding:0 1rem;}
+  .choice-cards{grid-template-columns:1fr;}
+  .step-line{width:30px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="メインナビゲーション">
+  <a href="/" class="nav-brand">心占</a>
+  <div class="nav-links">
+    <a href="/" class="nav-link">占いを始める</a>
+    <a href="/faq" class="nav-link">FAQ</a>
+    <a href="/withdraw" class="nav-link active">退会</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <span class="page-eyebrow">Account</span>
+  <h1 class="page-title">退会・解約のご案内</h1>
+  <p class="page-lead">お手続きの前に、ご確認いただきたいことがあります。<br>以下をお読みの上、手続きへお進みください。</p>
+</div>
+
+<div class="wrap">
+
+  <!-- ステップナビ -->
+  <div class="step-nav" id="step-nav" aria-label="手続きの進捗">
+    <div class="step active" id="sn1">
+      <div class="step-circle">1</div>
+      <div class="step-label">種別を選ぶ</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="sn2">
+      <div class="step-circle">2</div>
+      <div class="step-label">理由を教える</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="sn3">
+      <div class="step-circle">3</div>
+      <div class="step-label">確認・完了</div>
+    </div>
+  </div>
+
+  <!-- ══ SECTION 1: 種別選択 ══ -->
+  <div class="pg-section active" id="sec1">
+
+    <div class="callout gold">
+      <span class="callout-ico">✦</span>
+      <div class="callout-body">
+        <strong>解約してもデータは消えません。</strong><br>
+        プランを解約すると無料プランに移行します。鑑定履歴・アカウントは保持されます。
+        完全に削除したい場合は「アカウントを完全削除」をお選びください。
+      </div>
+    </div>
+
+    <div class="callout info" style="margin-bottom:1.8rem">
+      <span class="callout-ico">💡</span>
+      <div class="callout-body">
+        <strong>一度立ち止まってください。</strong><br>
+        もし「使いこなせていない」「高い」とお感じであれば、
+        <a href="/faq#plan">プランのダウングレード</a>という選択肢もあります。
+        無料プランへの移行なら、解約手続きは不要です。<br>
+        また、<strong>7日間無料期間中の解約は料金が一切発生しません。</strong>
+      </div>
+    </div>
+
+    <div class="choice-cards" role="radiogroup" aria-label="手続きの種別">
+      <div class="choice-card" id="cc-plan" onclick="selectType('plan',this)" role="radio" aria-checked="false" tabindex="0">
+        <div class="cc-ico">💳</div>
+        <div class="cc-title">有料プランを解約</div>
+        <div class="cc-desc">無料プランに移行します。<br>データ・アカウントは残ります。</div>
+      </div>
+      <div class="choice-card danger-card" id="cc-delete" onclick="selectType('delete',this)" role="radio" aria-checked="false" tabindex="0">
+        <div class="cc-ico">🗑️</div>
+        <div class="cc-title">アカウントを完全削除</div>
+        <div class="cc-desc">全データが削除されます。<br>この操作は元に戻せません。</div>
+      </div>
+    </div>
+
+    <button class="btn-ghost" id="btn-next1" onclick="goSec(2)" disabled>次へ →</button>
+
+  </div>
+
+  <!-- ══ SECTION 2: 退会理由 ══ -->
+  <div class="pg-section" id="sec2">
+
+    <div class="card">
+      <div class="card-title">
+        <span id="sec2-ico">💳</span>
+        <span id="sec2-title">有料プランを解約</span>
+      </div>
+      <p class="card-desc" id="sec2-desc">
+        解約後は無料プランに移行します。契約期間の終了日まで有料機能をご利用いただけます。
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">お手続きの理由をお聞かせください</div>
+      <p style="font-size:0.78rem;color:var(--mist);margin-bottom:1rem">
+        （任意）いただいたご意見はサービス改善に活用します。
+      </p>
+      <div class="reason-list" role="radiogroup" id="reason-list">
+        <div class="reason-item" onclick="selectReason(this,'high')">
+          <div class="reason-radio"></div>料金が高い
+        </div>
+        <div class="reason-item" onclick="selectReason(this,'notuse')">
+          <div class="reason-radio"></div>あまり使わなかった
+        </div>
+        <div class="reason-item" onclick="selectReason(this,'notmatch')">
+          <div class="reason-radio"></div>鑑定内容が合わなかった
+        </div>
+        <div class="reason-item" onclick="selectReason(this,'found')">
+          <div class="reason-radio"></div>他のサービスを使うことにした
+        </div>
+        <div class="reason-item" onclick="selectReason(this,'temp')">
+          <div class="reason-radio"></div>一時的に休止したい
+        </div>
+        <div class="reason-item" onclick="selectReason(this,'other')">
+          <div class="reason-radio"></div>その他
+        </div>
+      </div>
+
+      <textarea id="reason-text" placeholder="その他の理由や、ご意見をご自由にどうぞ（任意）" style="margin-top:0.5rem"></textarea>
+    </div>
+
+    <!-- 一時休止への誘導（高い・使わなかった場合に表示） -->
+    <div class="callout gold" id="suggest-downgrade" style="display:none">
+      <span class="callout-ico">💡</span>
+      <div class="callout-body">
+        <strong>プランのダウングレードはいかがですか？</strong><br>
+        Plusプラン（980円/月）なら毎日の運勢だけをキープできます。
+        いつでも戻れます。<br>
+        <a href="/account/plan">プランを変更する →</a>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.8rem;flex-wrap:wrap">
+      <button class="btn-safe" style="flex:1;min-width:140px" onclick="goSec(1)">← 戻る</button>
+      <button class="btn-danger" style="flex:2;min-width:180px" onclick="goSec(3)">確認画面へ →</button>
+    </div>
+
+  </div>
+
+  <!-- ══ SECTION 3: 確認・実行 ══ -->
+  <div class="pg-section" id="sec3">
+
+    <div class="card">
+      <div class="card-title">手続き内容の確認</div>
+      <div class="confirm-box">
+        <div class="confirm-row">
+          <span class="confirm-key">手続き種別</span>
+          <span class="confirm-val" id="cf-type">有料プランの解約</span>
+        </div>
+        <div class="confirm-row">
+          <span class="confirm-key">現在のプラン</span>
+          <span class="confirm-val" id="cf-plan">Premium（¥2,980/月）</span>
+        </div>
+        <div class="confirm-row">
+          <span class="confirm-key">契約終了日</span>
+          <span class="confirm-val" id="cf-date">—</span>
+        </div>
+        <div class="confirm-row" id="cf-data-row">
+          <span class="confirm-key">データの扱い</span>
+          <span class="confirm-val" id="cf-data">無料プランに移行（保持）</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="final-checks">
+      <div class="card-title">最終確認</div>
+
+      <div class="check-row" onclick="toggleCheck('ck1')" role="checkbox" aria-checked="false" tabindex="0">
+        <div class="custom-check" id="ck1"></div>
+        <span id="ck1-label">解約後も契約終了日までは有料機能を利用できることを理解しました</span>
+      </div>
+      <div class="check-row" onclick="toggleCheck('ck2')" role="checkbox" aria-checked="false" tabindex="0">
+        <div class="custom-check" id="ck2"></div>
+        <span id="ck2-label">この手続きを自分の意思で行っていることを確認します</span>
+      </div>
+      <div class="check-row" id="ck3-row" style="display:none" onclick="toggleCheck('ck3')" role="checkbox" aria-checked="false" tabindex="0">
+        <div class="custom-check" id="ck3"></div>
+        <span>全データが完全に削除され、復元できないことを理解しました</span>
+      </div>
+    </div>
+
+    <div class="callout warn" id="warn-delete" style="display:none">
+      <span class="callout-ico">⚠️</span>
+      <div class="callout-body">
+        <strong>この操作は元に戻せません。</strong><br>
+        アカウント・鑑定履歴・すべての個人データが完全に削除されます。
+      </div>
+    </div>
+
+    <button class="btn-danger" id="exec-btn" onclick="execWithdraw()" disabled
+      style="margin-bottom:0.6rem" id="exec-btn">
+      <span id="exec-label">解約を実行する</span>
+    </button>
+    <button class="btn-ghost" onclick="goSec(2)">← 戻る</button>
+
+    <p style="text-align:center;font-size:0.68rem;color:rgba(255,255,255,0.2);margin-top:1rem;line-height:1.9">
+      問題が解決しない場合は <a href="/contact" style="color:rgba(180,145,60,0.5);text-decoration:none">お問い合わせ</a> ください。<br>
+      1〜2営業日以内に対応いたします。
+    </p>
+  </div>
+
+  <!-- ══ SECTION 4: 完了 ══ -->
+  <div class="pg-section" id="sec4">
+    <div class="complete-view">
+      <span class="complete-ico" id="complete-ico">✦</span>
+      <h2 class="complete-title" id="complete-title">手続きが完了しました</h2>
+      <p class="complete-msg" id="complete-msg">
+        ご利用いただき、ありがとうございました。<br>
+        またいつでも戻ってきてください。
+      </p>
+      <a href="/" class="btn-return">心占のトップに戻る</a>
+    </div>
+  </div>
+
+</div>
+
+<footer class="ft">
+  <p class="ft-brand">心占 SHINSO</p>
+  <div class="ft-links" style="margin-bottom:0.5rem">
+    <a href="/">占いを始める</a>
+    <a href="/faq">FAQ</a>
+    <a href="/privacy">プライバシーポリシー</a>
+    <a href="/terms">利用規約</a>
+    <a href="/contact">お問い合わせ</a>
+  </div>
+  <p>© 2025 SHINSO — All readings are for self-reflection and personal growth purposes.</p>
+</footer>
+
+<script>
+let withdrawType = '';
+let selectedReason = '';
+const checks = {ck1:false, ck2:false, ck3:false};
+
+/* ── 種別選択 ── */
+function selectType(type, el){
+  document.querySelectorAll('.choice-card').forEach(c=>{
+    c.classList.remove('selected');
+    c.setAttribute('aria-checked','false');
+  });
+  el.classList.add('selected');
+  el.setAttribute('aria-checked','true');
+  withdrawType = type;
+  document.getElementById('btn-next1').disabled = false;
+}
+
+/* ── SECTION遷移 ── */
+function goSec(n){
+  document.querySelectorAll('.pg-section').forEach((s,i)=>{
+    s.classList.remove('active');
+  });
+  document.getElementById('sec'+n).classList.add('active');
+
+  // ステップナビ更新
+  [1,2,3].forEach(i=>{
+    const el = document.getElementById('sn'+i);
+    el.classList.remove('active','done');
+    if(i < n) el.classList.add('done');
+    else if(i === n) el.classList.add('active');
+  });
+
+  if(n === 2) buildSec2();
+  if(n === 3) buildSec3();
+
+  scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ── セクション2構築 ── */
+function buildSec2(){
+  const isPlan = withdrawType === 'plan';
+  document.getElementById('sec2-ico').textContent = isPlan ? '💳' : '🗑️';
+  document.getElementById('sec2-title').textContent = isPlan ? '有料プランを解約' : 'アカウントを完全削除';
+  document.getElementById('sec2-desc').textContent = isPlan
+    ? '解約後は無料プランに移行します。契約期間の終了日まで有料機能をご利用いただけます。'
+    : '手続き後、アカウントと全データが完全に削除されます。この操作は元に戻せません。';
+}
+
+/* ── 退会理由選択 ── */
+function selectReason(el, val){
+  document.querySelectorAll('.reason-item').forEach(r=>r.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedReason = val;
+  // 高い・使わなかった場合にダウングレード提案
+  const suggest = document.getElementById('suggest-downgrade');
+  suggest.style.display = (val==='high'||val==='notuse') ? 'flex' : 'none';
+}
+
+/* ── セクション3構築 ── */
+function buildSec3(){
+  const isPlan = withdrawType === 'plan';
+  // 今日から1ヶ月後（ダミー）
+  const d = new Date(); d.setMonth(d.getMonth()+1);
+  const dateStr = d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日';
+
+  document.getElementById('cf-type').textContent = isPlan ? '有料プランの解約' : 'アカウントの完全削除';
+  document.getElementById('cf-type').className = isPlan ? 'confirm-val' : 'confirm-val danger';
+  document.getElementById('cf-date').textContent = isPlan ? dateStr : '即時';
+  document.getElementById('cf-data').textContent = isPlan ? '無料プランに移行（保持）' : '全データを完全削除';
+  document.getElementById('cf-data').className = isPlan ? 'confirm-val' : 'confirm-val danger';
+
+  // 完全削除の場合は追加チェックと警告
+  document.getElementById('ck3-row').style.display = isPlan ? 'none' : 'flex';
+  document.getElementById('warn-delete').style.display = isPlan ? 'none' : 'flex';
+
+  // ラベル変更
+  document.getElementById('ck1-label').textContent = isPlan
+    ? '解約後も契約終了日までは有料機能を利用できることを理解しました'
+    : '全データが完全に削除されることを理解しました';
+  document.getElementById('exec-label').textContent = isPlan ? '解約を実行する' : 'アカウントを完全削除する';
+
+  // チェックをリセット
+  Object.keys(checks).forEach(k=>{ checks[k]=false; });
+  document.querySelectorAll('.custom-check').forEach(c=>{
+    c.classList.remove('checked');
+    c.closest('[role=checkbox]')?.setAttribute('aria-checked','false');
+  });
+  document.getElementById('exec-btn').disabled = true;
+}
+
+/* ── チェック ── */
+function toggleCheck(id){
+  checks[id] = !checks[id];
+  const el = document.getElementById(id);
+  el.classList.toggle('checked', checks[id]);
+  el.closest('[role=checkbox]')?.setAttribute('aria-checked', checks[id].toString());
+  // ボタン活性化
+  const isPlan = withdrawType === 'plan';
+  const ok = isPlan
+    ? (checks.ck1 && checks.ck2)
+    : (checks.ck1 && checks.ck2 && checks.ck3);
+  document.getElementById('exec-btn').disabled = !ok;
+}
+
+/* ── 実行 ── */
+function execWithdraw(){
+  const isPlan = withdrawType === 'plan';
+  // ここに実際のAPI呼び出しを実装
+  // fetch('/api/withdraw', {...})
+
+  // 完了画面
+  document.querySelectorAll('.pg-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec4').classList.add('active');
+  ['sn1','sn2','sn3'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  ['sn1','sn2','sn3'].forEach(id=>document.getElementById(id).classList.add('done'));
+
+  if(isPlan){
+    document.getElementById('complete-ico').textContent = '🌙';
+    document.getElementById('complete-title').textContent = '解約が完了しました';
+    document.getElementById('complete-msg').innerHTML =
+      'ご利用いただき、ありがとうございました。<br>'
+      +'契約終了日まで引き続きご利用いただけます。<br><br>'
+      +'またいつでも戻ってきてください。<br>'
+      +'<span style="font-size:0.78rem;color:rgba(107,122,141,0.8)">汝の魂の探求は、終わらない。</span>';
+  } else {
+    document.getElementById('complete-ico').textContent = '🕯️';
+    document.getElementById('complete-title').textContent = 'アカウントを削除しました';
+    document.getElementById('complete-msg').innerHTML =
+      '全てのデータを削除しました。<br>'
+      +'ご利用いただき、ありがとうございました。<br><br>'
+      +'<span style="font-size:0.78rem;color:rgba(107,122,141,0.8)">またいつか、扉は再び開かれる。</span>';
+  }
+
+  scrollTo({top:0,behavior:'smooth'});
+}
+
+// 今日の日付をセット
+document.getElementById('cf-date').textContent = (() => {
+  const d = new Date(); d.setMonth(d.getMonth()+1);
+  return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日';
+})();
+</script>
+</body>
+</html>
