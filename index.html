@@ -1093,6 +1093,79 @@ function toggleFaq(el){
 
 document.getElementById('prog-fill').style.width='0%';
 </script>
+  <!-- 手相鑑定セクション -->
+<section id="palm-reading" style="background:linear-gradient(135deg,#0a0520,#1a0840);padding:80px 20px;text-align:center;">
+  <div style="max-width:600px;margin:0 auto;">
+    <p style="color:#c9a227;font-size:13px;letter-spacing:0.3em;margin-bottom:16px;">🔮 NEW</p>
+    <h2 style="color:#f2d78c;font-size:32px;font-weight:700;margin-bottom:16px;font-family:'Noto Serif JP',serif;">手相鑑定</h2>
+    <p style="color:rgba(255,255,255,0.7);margin-bottom:40px;line-height:1.8;">手のひらの写真を送るだけで、AIが今すぐ鑑定します。</p>
+    <div id="palm-upload-area" style="border:2px dashed rgba(201,162,39,0.4);border-radius:16px;padding:40px;margin-bottom:24px;cursor:pointer;" onclick="document.getElementById('palm-input').click()">
+      <div id="palm-placeholder">
+        <p style="font-size:40px;margin-bottom:12px;">🤚</p>
+        <p style="color:rgba(255,255,255,0.6);font-size:14px;">タップして手のひら写真をアップロード</p>
+        <p style="color:rgba(255,255,255,0.4);font-size:12px;margin-top:8px;">右手・左手どちらでも可</p>
+      </div>
+      <img id="palm-preview" style="display:none;max-width:100%;border-radius:12px;" />
+    </div>
+    <input type="file" id="palm-input" accept="image/*" style="display:none;" onchange="previewPalm(this)" />
+    <button onclick="analyzePalm()" style="background:linear-gradient(135deg,#c9a227,#f2d78c);color:#000;border:none;padding:16px 48px;border-radius:50px;font-size:16px;font-weight:700;cursor:pointer;font-family:'Noto Serif JP',serif;display:none;" id="palm-btn">✨ 今すぐ手相を視る</button>
+    <div id="palm-loading" style="display:none;color:#f2d78c;margin-top:24px;">
+      <p style="font-size:14px;letter-spacing:0.2em;">鑑定中...</p>
+    </div>
+    <div id="palm-result" style="display:none;background:rgba(201,162,39,0.08);border:1px solid rgba(201,162,39,0.3);border-radius:16px;padding:32px;margin-top:24px;text-align:left;">
+      <h3 style="color:#f2d78c;font-size:18px;margin-bottom:16px;font-family:'Noto Serif JP',serif;">🔮 鑑定結果</h3>
+      <p id="palm-text" style="color:rgba(255,255,255,0.85);line-height:2;font-size:15px;white-space:pre-wrap;"></p>
+    </div>
+  </div>
+</section>
+
+<script>
+function previewPalm(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('palm-preview').src = e.target.result;
+      document.getElementById('palm-preview').style.display = 'block';
+      document.getElementById('palm-placeholder').style.display = 'none';
+      document.getElementById('palm-btn').style.display = 'inline-block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+async function analyzePalm() {
+  const input = document.getElementById('palm-input');
+  if (!input.files || !input.files[0]) return;
+
+  document.getElementById('palm-btn').style.display = 'none';
+  document.getElementById('palm-loading').style.display = 'block';
+  document.getElementById('palm-result').style.display = 'none';
+
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const base64 = e.target.result.split(',')[1];
+    const mediaType = input.files[0].type;
+
+    try {
+      const res = await fetch('/api/palm-reading', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64, mediaType: mediaType })
+      });
+      const data = await res.json();
+      document.getElementById('palm-text').textContent = data.reading || data.error;
+      document.getElementById('palm-result').style.display = 'block';
+    } catch(e) {
+      document.getElementById('palm-text').textContent = '鑑定中にエラーが発生しました。もう一度お試しください。';
+      document.getElementById('palm-result').style.display = 'block';
+    }
+
+    document.getElementById('palm-loading').style.display = 'none';
+    document.getElementById('palm-btn').style.display = 'inline-block';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+</script>
 </body>
 </html>
 <script>
