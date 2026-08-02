@@ -1,4 +1,4 @@
-const Anthropic = require("@anthropic-ai/sdk");
+const { Anthropic } = require("@anthropic-ai/sdk");
 
 module.exports = async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
