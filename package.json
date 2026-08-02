@@ -4,7 +4,7 @@
   "description": "心占SHINSO - AI占いサービス",
   "engines": { "node": "20.x" },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.24.0",
+    "@anthropic-ai/sdk": "^0.36.0",
     "stripe": "^14.0.0"
   }
 }
