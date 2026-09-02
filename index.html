@@ -1240,4 +1240,20 @@ async function openCheckout(plan) {
     alert('通信エラーが発生しました');
   }
 }
-</script>
+(async function checkSessionOnLoad(){
+  const params = new URLSearchParams(location.search);
+  const sessionId = params.get('session_id');
+  if(!sessionId) return;
+  try{
+    const res = await fetch('/api/verify-session?session_id=' + encodeURIComponent(sessionId));
+    const data = await res.json();
+    if(data.ok){
+      alert('ご登録ありがとうございます。決済が完了しました。');
+    }else{
+      alert('決済の確認ができませんでした。反映まで数分かかる場合があります。');
+    }
+  }catch(e){
+    console.error(e);
+  }
+  history.replaceState({}, '', location.pathname);
+})();</script>
