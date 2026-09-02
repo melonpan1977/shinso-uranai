@@ -1076,7 +1076,21 @@ function choosePlan(el,name){
 }
 
 async function openGate(){
-  alert('現在、システムメンテナンスのため一時的にご利用いただけません。今しばらくお待ちください。');
+  const btn = document.querySelector('.gateway-btn');
+  if(btn){ btn.disabled = true; btn.textContent = '処理中...'; }
+  try{
+    const res = await fetch('/api/create-checkout', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ plan: selectedPlan })
+    });
+    const data = await res.json();
+    if(data.url){ location.href = data.url; }
+    else{ alert(data.error || '決済ページの作成に失敗しました。'); if(btn){ btn.disabled=false; btn.textContent='🔓 扉を開き、続きを受け取る 🔓'; } }
+  }catch(e){
+    alert('通信エラーが発生しました。時間をおいて再度お試しください。');
+    if(btn){ btn.disabled=false; btn.textContent='🔓 扉を開き、続きを受け取る 🔓'; }
+  }
 }
 
   function share(){
