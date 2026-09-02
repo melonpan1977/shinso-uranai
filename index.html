@@ -1075,29 +1075,11 @@ function choosePlan(el,name){
 }
 
 async function openGate(){
-  const btn = document.querySelector('.gateway-btn');
-  if(btn){btn.disabled = true; btn.textContent = '処理中...';}
-  try{
-    const res = await fetch('/api/create-checkout', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({plan: selectedPlan})
-    });
-    const data = await res.json();
-    if(data.url){
-      location.href = data.url;
-    } else {
-      alert('決済ページの作成に失敗しました。時間をおいて再度お試しください。');
-      if(btn){btn.disabled=false; btn.textContent='✦ 扉を開き、続きを受け取る ✦';}
-    }
-  }catch(e){
-    alert('決済ページの作成に失敗しました。通信環境をご確認のうえ、再度お試しください。');
-    if(btn){btn.disabled=false; btn.textContent='✦ 扉を開き、続きを受け取る ✦';}
-  }
+  alert('現在、システムメンテナンスのため一時的にご利用いただけません。今しばらくお待ちください。');
 }
 
-function share(){
-  const sc=document.getElementById('r-score').textContent;
+  function share(){
+ const sc=document.getElementById('r-score').textContent;
   const word=document.getElementById('r-word').textContent;
   const text=`心占SHINSOで鑑定を受けました。「${word}」 共鳴指数 ${sc}\n\nあなたも試してみてください👇`;
   if(navigator.share){navigator.share({title:'心占SHINSO — 私の神託',text,url:location.href});}
