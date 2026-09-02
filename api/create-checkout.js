@@ -3,7 +3,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const PRICES = {
   plus:    "price_1TmIALHxskKHNuyk7fPJd6p5",
   premium: "price_1TmIBbHxskKHNuykEuK4ghby",
-  master:  "price_1TmICYHxskKHNuyk68EfgptO",
+master: "price_1TmlCYHxskKHNuyk68EfgptO",
 };
 
 module.exports = async (req, res) => {
