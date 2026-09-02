@@ -3,6 +3,7 @@
   "routes": [
     { "src": "/FAQ", "dest": "/faq.html" },
     { "src": "/撤退", "dest": "/withdraw.html" },
+    { "src": "/withdraw.html", "dest": "/withdraw.html" },
     { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
     { "src": "/robots.txt", "dest": "/robots.txt" },
     { "src": "/api/fortune", "dest": "/api/fortune.js" },
