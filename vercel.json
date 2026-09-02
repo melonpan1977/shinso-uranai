@@ -8,7 +8,8 @@
     { "src": "/robots.txt", "dest": "/robots.txt" },
     { "src": "/api/fortune", "dest": "/api/fortune.js" },
     { "src": "/api/create-checkout", "dest": "/api/create-checkout.js" },
-    { "src": "/api/palm-reading", "dest": "/api/palm-reading.js" },
+    { "src": "/api/palm-reading", "dest": "/api/palm-reading.{ "src": "/api/create-portal", "dest": "/api/create-portal" },
+    { "src": "/api/create-portal", "dest": "/api/create-portal" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
