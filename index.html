@@ -1087,11 +1087,11 @@ async function openGate(){
     if(data.url){
       location.href = data.url;
     } else {
-      alert('デバッグ情報: status=' + res.status + ' / ' + JSON.stringify(data));
+      alert('決済ページの作成に失敗しました。時間をおいて再度お試しください。');
       if(btn){btn.disabled=false; btn.textContent='✦ 扉を開き、続きを受け取る ✦';}
     }
   }catch(e){
-    alert('デバッグ情報(catch): ' + e.message);
+    alert('決済ページの作成に失敗しました。通信環境をご確認のうえ、再度お試しください。');
     if(btn){btn.disabled=false; btn.textContent='✦ 扉を開き、続きを受け取る ✦';}
   }
 }
