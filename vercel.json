@@ -10,6 +10,7 @@
     { "src": "/api/create-checkout", "dest": "/api/create-checkout" },
     { "src": "/api/palm-reading", "dest": "/api/palm-reading" },
     { "src": "/api/create-portal", "dest": "/api/create-portal" },
+    { "src": "/api/verify-session", "dest": "/api/verify-session" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
