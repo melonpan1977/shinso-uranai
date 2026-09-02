@@ -1285,16 +1285,16 @@ async function openCheckout(plan) {
     console.error(e);
   }
   history.replaceState({}, '', location.pathname);
-})();async function showDailyFortune(){
-  const sessionId = localStorage.getItem('shinso_session_id');
-  if(!sessionId){ alert('有料プランのご登録が確認できません。'); return; }
+async function showDailyFortune(){
+  const email = localStorage.getItem('shinso_member_email') || S.email;
+  if(!email){ alert('有料プランのご登録が確認できません。'); return; }
   const resultEl = document.getElementById('daily-fortune-result');
   resultEl.textContent = '本日の運勢を占っています...';
   try{
     const res = await fetch('/api/daily-fortune', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ name: S.name, birthday: S.birth, session_id: sessionId })
+      body: JSON.stringify({ name: S.name, birthday: S.birth, email: email })
     });
     const data = await res.json();
     if(data.fortune){ resultEl.textContent = data.fortune; }
