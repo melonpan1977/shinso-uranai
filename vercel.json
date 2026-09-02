@@ -1,6 +1,6 @@
 {
   "version": 2,
-   "routes": [
+  "routes": [
     { "src": "/FAQ", "dest": "/faq.html" },
     { "src": "/撤退", "dest": "/withdraw.html" },
     { "src": "/withdraw.html", "dest": "/withdraw.html" },
@@ -11,8 +11,5 @@
     { "src": "/api/palm-reading", "dest": "/api/palm-reading" },
     { "src": "/api/create-portal", "dest": "/api/create-portal" },
     { "src": "/(.*)", "dest": "/index.html" }
-  ]
-
-
   ]
 }
