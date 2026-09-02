@@ -752,7 +752,8 @@ textarea{resize:vertical;min-height:80px;line-height:1.8;}
         <div class="plan-feat"><span>AI占い師 無制限</span><br><span>詳細分析</span></div>
       </div>
     </div>
-    <button class="gateway-btn" onclick="openGate()">✦ &nbsp;扉を開き、続きを受け取る&nbsp; ✦</button>
+    <button class="gateway-btn" onclick="openGate()">✦ &nbsp;扉を開き、続きを受け取る&nbsp; ✦</button><button class="gateway-btn" id="daily-fortune-btn" style="display:none;margin-top:12px;" onclick="showDailyFortune()">✨ 今日の運勢を見る ✨</button>
+<p id="daily-fortune-result" style="margin-top:16px;white-space:pre-wrap;"></p>
     <p class="gateway-note">いつでも解約できる &nbsp;·&nbsp; Plus以上は7日間無料トライアル &nbsp;·&nbsp; 魂の探求に縛りはない</p>
   </div>
   <div class="bot-row">
@@ -1248,7 +1249,10 @@ async function openCheckout(plan) {
     const res = await fetch('/api/verify-session?session_id=' + encodeURIComponent(sessionId));
     const data = await res.json();
     if(data.ok){
-      alert('ご登録ありがとうございます。決済が完了しました。');
+      alert('ご登録ありがとうございます。決済が完了しました。');    
+      localStorage.setItem('shinso_session_id', sessionId);
+      const btn = document.getElementById('daily-fortune-btn');
+      if(btn) btn.style.display = 'inline-block';
     }else{
       alert('決済の確認ができませんでした。反映まで数分かかる場合があります。');
     }
@@ -1256,4 +1260,21 @@ async function openCheckout(plan) {
     console.error(e);
   }
   history.replaceState({}, '', location.pathname);
-})();</script>
+})();async function showDailyFortune(){
+  const sessionId = localStorage.getItem('shinso_session_id');
+  if(!sessionId){ alert('有料プランのご登録が確認できません。'); return; }
+  const resultEl = document.getElementById('daily-fortune-result');
+  resultEl.textContent = '本日の運勢を占っています...';
+  try{
+    const res = await fetch('/api/daily-fortune', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name: S.name, birthday: S.birth, session_id: sessionId })
+    });
+    const data = await res.json();
+    if(data.fortune){ resultEl.textContent = data.fortune; }
+    else{ resultEl.textContent = data.error || '取得に失敗しました。'; }
+  }catch(e){
+    resultEl.textContent = '通信エラーが発生しました。';
+  }
+}</script>
