@@ -1,16 +1,18 @@
 {
   "version": 2,
-  "routes": [
+   "routes": [
     { "src": "/FAQ", "dest": "/faq.html" },
     { "src": "/撤退", "dest": "/withdraw.html" },
     { "src": "/withdraw.html", "dest": "/withdraw.html" },
     { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
     { "src": "/robots.txt", "dest": "/robots.txt" },
     { "src": "/api/fortune", "dest": "/api/fortune" },
-{ "src": "/api/create-checkout", "dest": "/api/create-checkout" },
-{ "src": "/api/palm-reading", "dest": "/api/palm-reading" },
-{ "src": "/api/create-portal", "dest": "/api/create-portal" },
-{ "src": "/(.*)", "dest": "/index.html" }
+    { "src": "/api/create-checkout", "dest": "/api/create-checkout" },
+    { "src": "/api/palm-reading", "dest": "/api/palm-reading" },
+    { "src": "/api/create-portal", "dest": "/api/create-portal" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+
 
   ]
 }
