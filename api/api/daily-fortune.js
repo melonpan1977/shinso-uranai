@@ -1,4 +1,5 @@
 const https = require("https");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 module.exports = async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -7,22 +8,29 @@ module.exports = async (req, res) => {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   try {
-    const { name, birthday, session_id } = req.body;
-    if (!session_id) return res.status(400).json({ error: "決済情報が確認できません" });
+    const { name, birthday, email } = req.body;
+    if (!email) return res.status(400).json({ error: "メールアドレスがありません" });
     if (!name || !birthday) return res.status(400).json({ error: "名前と生年月日が必要です" });
 
+    const customers = await stripe.customers.list({ email, limit: 1 });
+    if (customers.data.length === 0) {
+      return res.status(403).json({ error: "ご登録が確認できません" });
+    }
+    const subs = await stripe.subscriptions.list({ customer: customers.data[0].id, status: "all", limit: 1 });
+    const active = subs.data.find(s => s.status === "active" || s.status === "trialing");
+    if (!active) {
+      return res.status(403).json({ error: "有料プランのご登録が確認できません" });
+    }
+
     const today = new Date().toISOString().slice(0, 10);
-    const seed = `${name}-${birthday}-${today}`;
 
     const body = JSON.stringify({
       model: "claude-sonnet-4-6",
-      max_tokens: 512,
-      messages: [
-        {
-          role: "user",
-          content: `あなたは心占SHINSOの専属占い師です。次のシード値を元に、今日1日だけ有効な「今日の運勢」を神秘的で断定的な口調で鑑定してください。シード:${seed}。マークダウン記号(**、##、[]など)は一切使わないでください。全体運・注意すべきこと・今日のラッキーアクションの3点を、150字程度で簡潔に伝えてください。`
-        }
-      ]
+      max_tokens: 400,
+      messages: [{
+        role: "user",
+        content: `あなたは心占SHINSOの占い師です。神秘的で断定的な口調で、${name}さん(生年月日:${birthday})の${today}の運勢を占ってください。マークダウン記号(**、##、[]など)は一切使わないでください。150文字程度で、今日1日の運勢を具体的に伝えてください。「〜とされます」という表現で言い切りすぎないよう注意し、現在の傾向として伝えてください。`
+      }]
     });
 
     const options = {
