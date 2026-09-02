@@ -1066,11 +1066,35 @@ function render(r,lp,nn){
 function themeLabel(t){
   return{love:'愛と縁',work:'使命と仕事',money:'富と豊かさ',self:'自己と覚醒',bond:'人間関係',all:'人生全体'}[t]||'総合';}
 
+let selectedPlan = 'premium';
+
 function choosePlan(el,name){
   document.querySelectorAll('.plan').forEach(p=>{p.classList.remove('chosen');p.setAttribute('aria-checked','false');});
-  el.classList.add('chosen');el.setAttribute('aria-checked','true');}
+  el.classList.add('chosen');el.setAttribute('aria-checked','true');
+  selectedPlan = name;
+}
 
-function openGate(){alert('【デモ】ここにStripe等の課金システムを統合してください。');}
+async function openGate(){
+  const btn = document.querySelector('.gateway-btn');
+  if(btn){btn.disabled = true; btn.textContent = '処理中...';}
+  try{
+    const res = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({plan: selectedPlan})
+    });
+    const data = await res.json();
+    if(data.url){
+      location.href = data.url;
+    } else {
+      alert('決済ページの作成に失敗しました。時間をおいて再度お試しください。');
+      if(btn){btn.disabled=false; btn.textContent='✦ 扉を開き、続きを受け取る ✦';}
+    }
+  }catch(e){
+    alert('決済ページの作成に失敗しました。通信環境をご確認のうえ、再度お試しください。');
+    if(btn){btn.disabled=false; btn.textContent='✦ 扉を開き、続きを受け取る ✦';}
+  }
+}
 
 function share(){
   const sc=document.getElementById('r-score').textContent;
