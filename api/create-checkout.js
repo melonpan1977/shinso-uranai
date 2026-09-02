@@ -22,8 +22,8 @@ module.exports = async (req, res) => {
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
       subscription_data: { trial_period_days: 7 },
-      success_url: "https://shinso-uranai.vercel.app/",
-      cancel_url: "https://shinso-uranai.vercel.app/",
+      success_url: "https://shinso-uranai.jp/
+      cancel_url: "https://shinso-uranai.jp/
     });
 
     res.status(200).json({ url: session.url });
