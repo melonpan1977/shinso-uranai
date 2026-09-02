@@ -12,6 +12,7 @@
     { "src": "/api/create-portal", "dest": "/api/create-portal" },
     { "src": "/api/verify-session", "dest": "/api/verify-session" },
     { "src": "/api/daily-fortune", "dest": "/api/daily-fortune" },
+    { "src": "/api/check-member", "dest": "/api/check-member" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
