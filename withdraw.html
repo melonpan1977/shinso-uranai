@@ -22,7 +22,7 @@ button{background:#c9a227;color:#000;border:none;padding:14px 32px;border-radius
 <p id="msg"></p>
 <script>
 async function goToPortal(){
-  const email = document.getElementById('email').value;
+  const email = document.getElementById('email').value.trim();
   const msg = document.getElementById('msg');
   if(!email){ msg.textContent = 'メールアドレスを入力してください。'; return; }
   msg.textContent = '確認中...';
@@ -32,11 +32,16 @@ async function goToPortal(){
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({email})
     });
-    const data = await res.json();
+    const text = await res.text();
+    let data;
+    try{ data = JSON.parse(text); }catch(parseErr){
+      msg.textContent = '[診断] status:' + res.status + ' body:' + text.slice(0,300);
+      return;
+    }
     if(data.url){ location.href = data.url; }
-    else{ msg.textContent = data.error || 'エラーが発生しました。'; }
+    else{ msg.textContent = data.error || ('[診断] status:' + res.status + ' ' + JSON.stringify(data)); }
   }catch(e){
-    msg.textContent = '通信エラーが発生しました。';
+    msg.textContent = '[診断] fetch自体が失敗: ' + e.message;
   }
 }
 </script>
