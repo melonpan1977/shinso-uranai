@@ -1,11 +1,10 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const PRICES = {
-  plus:    "price_1TmIALHxskKHNuyk7fPJd6p5",
-  premium: "price_1TmIBbHxskKHNuykEuK4ghby",
-master: "price_1TmlCYHxskKHNuyk68EfgptO",
+  plus:    "price_1TmlALHxskKHNuyk7fPJd6p5",
+  premium: "price_1TmlBbHxskKHNuykEuK4ghby",
+  master:  "price_1TmlCYHxskKHNuyk68EfgptO",
 };
-
 module.exports = async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
