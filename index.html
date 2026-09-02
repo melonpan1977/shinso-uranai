@@ -555,6 +555,12 @@ textarea{resize:vertical;min-height:80px;line-height:1.8;}
         <label class="card-label" for="i-time">出生時刻（任意）</label>
         <input type="text" id="i-time" placeholder="例：14:30 ／ 不明">
       </div>
+    </div>  
+    <div class="row2">
+      <div class="col" style="flex:1 1 100%;">
+        <label class="card-label" for="i-email">メールアドレス</label>
+        <input type="email" id="i-email" placeholder="登録済みの方は同じメールアドレスを入力" autocomplete="email">
+      </div>
     </div>
   </div>
   <button class="btn-primary" onclick="p1next()">次の問いへ →</button>
@@ -918,7 +924,8 @@ function sc(key,val,el){
 }
 function p1next(){
   S.name=document.getElementById('i-name').value.trim();
-  S.birth=document.getElementById('i-birth').value;
+  S.birth=document.getElementById('i-birth').value; 
+  S.email=document.getElementById('i-email').value.trim();
   if(!S.name||!S.birth){flash('名と生年月日を記せ');return;}
   S.gender=document.getElementById('i-gender').value;
   S.time=document.getElementById('i-time').value;gp(2);
@@ -1078,8 +1085,26 @@ function choosePlan(el,name){
 
 async function openGate(){
   const btn = document.querySelector('.gateway-btn');
-  if(btn){ btn.disabled = true; btn.textContent = '処理中...'; }
+  if(btn){ btn.disabled = true; btn.textContent = '確認中...'; }
   try{
+    if(S.email){
+      const checkRes = await fetch('/api/check-member', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ email: S.email })
+      });
+      const checkData = await checkRes.json();
+      if(checkData.isMember){
+        localStorage.setItem('shinso_member_email', S.email);
+        const dailyBtn = document.getElementById('daily-fortune-btn');
+        if(dailyBtn) dailyBtn.style.display = 'inline-block';
+        if(btn){ btn.style.display = 'none'; }
+        const note = document.querySelector('.gateway-note');
+        if(note){ note.textContent = 'ご登録済みです。下のボタンから今日の運勢をご覧いただけます。'; }
+        return;
+      }
+    }
+    if(btn){ btn.textContent = '処理中...'; }
     const res = await fetch('/api/create-checkout', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
