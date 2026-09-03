@@ -70,3 +70,104 @@ function renderFeatures(){
     const savedEmail = localStorage.getItem('shinso_member_email');
     const savedPlan = localStorage.getItem('shinso_member_plan');
     if(savedEmail){
+      memberEmail = savedEmail;
+      memberPlan = savedPlan || 'plus';
+      statusEl.textContent = 'おかえりなさい。';
+      document.getElementById('plan-badge').textContent = memberPlan.toUpperCase();
+      document.getElementById('form-area').style.display = 'block';
+      renderFeatures();
+    }else{
+      statusEl.textContent = '決済情報が見つかりませんでした。';
+    }
+    return;
+  }
+  try{
+    const res = await fetch('/api/verify-session?session_id=' + encodeURIComponent(sessionId));
+    const data = await res.json();
+    if(data.ok){
+      memberEmail = data.email;
+      memberPlan = data.plan || 'plus';
+      if(memberEmail) localStorage.setItem('shinso_member_email', memberEmail);
+      localStorage.setItem('shinso_member_plan', memberPlan);
+      statusEl.textContent = 'ご登録が完了しました。';
+      document.getElementById('plan-badge').textContent = memberPlan.toUpperCase();
+      document.getElementById('form-area').style.display = 'block';
+      renderFeatures();
+    }else{
+      statusEl.textContent = '決済の確認ができませんでした。反映まで数分かかる場合があります。';
+    }
+  }catch(e){
+    statusEl.textContent = '通信エラーが発生しました。';
+  }
+  history.replaceState({}, '', location.pathname);
+})();
+
+async function getFortune(){
+  const name = document.getElementById('i-name').value.trim();
+  const birth = document.getElementById('i-birth').value;
+  const msg = document.getElementById('msg');
+  const resultEl = document.getElementById('result');
+  if(!name || !birth){ msg.textContent = 'お名前と生年月日を入力してください。'; return; }
+  const email = memberEmail || localStorage.getItem('shinso_member_email');
+  if(!email){ msg.textContent = 'ご登録の確認ができません。'; return; }
+  msg.textContent = '占っています...';
+  resultEl.style.display = 'none';
+  try{
+    const res = await fetch('/api/daily-fortune', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name, birthday: birth, email })
+    });
+    const data = await res.json();
+    if(data.fortune){
+      msg.textContent = '';
+      resultEl.textContent = data.fortune;
+      resultEl.style.display = 'block';
+    }else{
+      msg.textContent = data.error || '取得に失敗しました。';
+    }
+  }catch(e){
+    msg.textContent = '通信エラーが発生しました。';
+  }
+}
+
+async function getPrediction(){
+  const msg = document.getElementById('msg');
+  const resultEl = document.getElementById('result');
+  const email = memberEmail || localStorage.getItem('shinso_member_email');
+  if(!email){ msg.textContent = 'ご登録の確認ができません。'; return; }
+  const profileRaw = localStorage.getItem('shinso_profile');
+  if(!profileRaw){ msg.textContent = '鑑定データが見つかりません。もう一度最初から鑑定をお試しください。'; return; }
+  let profile;
+  try{ profile = JSON.parse(profileRaw); }catch(e){ msg.textContent = '鑑定データの読み込みに失敗しました。'; return; }
+  msg.textContent = '今月の運命を読み解いています...（少し時間がかかります）';
+  resultEl.style.display = 'none';
+  try{
+    const res = await fetch('/api/future-prediction', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, profile })
+    });
+    const data = await res.json();
+    if(data.weeks){
+      msg.textContent = '';
+      let html = '';
+      if(data.summary){
+        html += '<p style="color:#f2d78c;font-weight:700;margin-bottom:16px;">' + data.summary + '</p>';
+      }
+      data.weeks.forEach(w => {
+        html += '<p style="color:#c9a227;font-size:13px;margin-top:16px;margin-bottom:6px;">' + w.label + '</p>';
+        html += '<p>' + w.text + '</p>';
+      });
+      resultEl.innerHTML = html;
+      resultEl.style.display = 'block';
+    }else{
+      msg.textContent = data.error || '取得に失敗しました。';
+    }
+  }catch(e){
+    msg.textContent = '通信エラーが発生しました。';
+  }
+}
+</script>
+</body>
+</html>
