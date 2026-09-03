@@ -74,6 +74,7 @@ function renderFeatures(){
       memberEmail = data.email;
       memberPlan = data.plan || 'plus';
       if(memberEmail) localStorage.setItem('shinso_member_email', memberEmail);
+      statusEl.textContent = 'ご登録が完了しました。(保存メール: ' + memberEmail + ')';
       localStorage.setItem('shinso_member_plan', memberPlan);
       statusEl.textContent = 'ご登録が完了しました。';
       document.getElementById('plan-badge').textContent = memberPlan.toUpperCase();
