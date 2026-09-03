@@ -1085,6 +1085,7 @@ function choosePlan(el,name){
 
 async function openGate(){
   const btn = document.querySelector('.gateway-btn');
+  localStorage.setItem('shinso_profile', JSON.stringify(S));
   if(btn){ btn.disabled = true; btn.textContent = '確認中...'; }
   try{
   const savedEmail = localStorage.getItem('shinso_member_email');
