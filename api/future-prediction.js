@@ -27,8 +27,18 @@ module.exports = async (req, res) => {
       return res.status(403).json({ error: "この機能はPremium以上のプラン限定です" });
     }
 
-    const today = new Date().toISOString().slice(0, 10);
-    const thisMonth = today.slice(0, 7);
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const thisMonth = year + "-" + String(month).padStart(2, "0");
+    const lastDay = new Date(year, month, 0).getDate();
+
+    const weekRanges = [
+      { label: "第1週（1〜7日）", start: 1, end: 7 },
+      { label: "第2週（8〜14日）", start: 8, end: 14 },
+      { label: "第3週（15〜21日）", start: 15, end: 21 },
+      { label: "第4週（22〜" + lastDay + "日）", start: 22, end: lastDay }
+    ];
 
     const profileText = `
 名前: ${profile.name}
@@ -41,14 +51,21 @@ module.exports = async (req, res) => {
 
     const body = JSON.stringify({
       model: "claude-sonnet-4-6",
-      max_tokens: 500,
+      max_tokens: 1200,
       messages: [{
         role: "user",
-        content: `あなたは心占SHINSOのAI占い師です。以下の鑑定データを多角的に分析し、${thisMonth}(今月)の未来予測を、神秘的で断定的な口調で伝えてください。
+        content: `あなたは心占SHINSOのAI占い師です。以下の鑑定データを多角的に分析し、${year}年${month}月の未来予測を、神秘的で断定的な口調で、週ごとに分けて伝えてください。
 
 ${profileText}
 
-心占SHINSO独自の「時命数」「言霊数」「魂紋」という概念を交えつつ、今月訪れる可能性のある転機や、注意すべき時期について、200文字程度で具体的に伝えてください。マークダウン記号(**、##、[]など)は一切使わないでください。「〜とされます」「〜の傾向にあります」という表現を使い、確定的な断言(「〜します」「絶対に〜」)は避けてください。`
+心占SHINSO独自の「時命数」「言霊数」「魂紋」という概念を交えつつ、以下の4つの週それぞれについて150〜200文字程度で、その週に訪れる可能性のある出来事や心境の変化、注意点を具体的に伝えてください。
+
+${weekRanges.map(w => "・" + w.label).join("\n")}
+
+出力形式は、必ず以下のJSON形式のみで、Markdownのコードブロックや説明文は一切付けないでください。
+{"week1":"第1週の文章","week2":"第2週の文章","week3":"第3週の文章","week4":"第4週の文章","summary":"月全体を貫くテーマを50文字程度で"}
+
+マークダウン記号(**、##、[]など)は一切使わないでください。「〜とされます」「〜の傾向にあります」という表現を使い、確定的な断言(「〜します」「絶対に〜」)は避けてください。`
       }]
     });
 
@@ -76,7 +93,23 @@ ${profileText}
     });
 
     if (result.error) return res.status(500).json({ error: result.error.message });
-    res.status(200).json({ prediction: result.content[0].text, month: thisMonth });
+
+    const raw = (result.content || []).map(i => i.text || "").join("");
+    let parsed;
+    try {
+      parsed = JSON.parse(raw.replace(/```json|```/g, "").trim());
+    } catch (e) {
+      return res.status(500).json({ error: "予測データの解析に失敗しました" });
+    }
+
+    res.status(200).json({
+      month: thisMonth,
+      summary: parsed.summary || "",
+      weeks: weekRanges.map((w, i) => ({
+        label: w.label,
+        text: parsed["week" + (i + 1)] || ""
+      }))
+    });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
