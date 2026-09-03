@@ -1096,7 +1096,6 @@ if(savedEmail){
       });
       const checkData = await checkRes.json();
       if(checkData.isMember){
-        localStorage.setItem('shinso_member_email', S.email);
         const dailyBtn = document.getElementById('daily-fortune-btn');
         if(dailyBtn) dailyBtn.style.display = 'inline-block';
         if(btn){ btn.style.display = 'none'; }
