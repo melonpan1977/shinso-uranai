@@ -1275,7 +1275,7 @@ async function openCheckout(plan) {
     const data = await res.json();
     if(data.ok){
       alert('ご登録ありがとうございます。決済が完了しました。');    
- if(S.email) localStorage.setItem('shinso_member_email', S.email);
+if(data.email) localStorage.setItem('shinso_member_email', data.email);
       const btn = document.getElementById('daily-fortune-btn');
       if(btn) btn.style.display = 'inline-block';
     }else{
