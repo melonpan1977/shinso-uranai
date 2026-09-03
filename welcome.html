@@ -115,6 +115,34 @@ async function getFortune(){
   }catch(e){
     msg.textContent = '通信エラーが発生しました。';
   }
+}async function getPrediction(){
+  const msg = document.getElementById('msg');
+  const resultEl = document.getElementById('result');
+  const email = memberEmail || localStorage.getItem('shinso_member_email');
+  if(!email){ msg.textContent = 'ご登録の確認ができません。'; return; }
+  const profileRaw = localStorage.getItem('shinso_profile');
+  if(!profileRaw){ msg.textContent = '鑑定データが見つかりません。もう一度最初から鑑定をお試しください。'; return; }
+  let profile;
+  try{ profile = JSON.parse(profileRaw); }catch(e){ msg.textContent = '鑑定データの読み込みに失敗しました。'; return; }
+  msg.textContent = '今月の運命を読み解いています...';
+  resultEl.style.display = 'none';
+  try{
+    const res = await fetch('/api/future-prediction', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, profile })
+    });
+    const data = await res.json();
+    if(data.prediction){
+      msg.textContent = '';
+      resultEl.textContent = data.prediction;
+      resultEl.style.display = 'block';
+    }else{
+      msg.textContent = data.error || '取得に失敗しました。';
+    }
+  }catch(e){
+    msg.textContent = '通信エラーが発生しました。';
+  }
 }
 </script>
 </body>
