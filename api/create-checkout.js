@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
       subscription_data: { trial_period_days: 7 },
-            success_url: "https://shinso-uranai.jp/?session_id={CHECKOUT_SESSION_ID}",
+            success_url: "https://shinso-uranai.jp/welcome.html?session_id={CHECKOUT_SESSION_ID}",
 cancel_url: "https://shinso-uranai.jp/",
     });
 
