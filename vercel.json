@@ -14,6 +14,7 @@
     { "src": "/api/verify-session", "dest": "/api/verify-session" },
     { "src": "/api/daily-fortune", "dest": "/api/daily-fortune" },
     { "src": "/api/check-member", "dest": "/api/check-member" },
+    { "src": "/api/future-prediction", "dest": "/api/future-prediction" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
