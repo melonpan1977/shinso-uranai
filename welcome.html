@@ -66,7 +66,21 @@ function renderFeatures(){
   const params = new URLSearchParams(location.search);
   const sessionId = params.get('session_id');
   const statusEl = document.getElementById('status');
-  if(!sessionId){ statusEl.textContent = '決済情報が見つかりませんでした。'; return; }
+    if(!sessionId){
+    const savedEmail = localStorage.getItem('shinso_member_email');
+    const savedPlan = localStorage.getItem('shinso_member_plan');
+    if(savedEmail){
+      memberEmail = savedEmail;
+      memberPlan = savedPlan || 'plus';
+      statusEl.textContent = 'おかえりなさい。';
+      document.getElementById('plan-badge').textContent = memberPlan.toUpperCase();
+      document.getElementById('form-area').style.display = 'block';
+      renderFeatures();
+    }else{
+      statusEl.textContent = '決済情報が見つかりませんでした。';
+    }
+    return;
+  }
   try{
     const res = await fetch('/api/verify-session?session_id=' + encodeURIComponent(sessionId));
     const data = await res.json();
