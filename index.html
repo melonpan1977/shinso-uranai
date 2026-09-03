@@ -1087,11 +1087,12 @@ async function openGate(){
   const btn = document.querySelector('.gateway-btn');
   if(btn){ btn.disabled = true; btn.textContent = '確認中...'; }
   try{
-    if(S.email){
+  const savedEmail = localStorage.getItem('shinso_member_email');
+if(savedEmail){
       const checkRes = await fetch('/api/check-member', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ email: S.email })
+               body: JSON.stringify({ email: savedEmail })
       });
       const checkData = await checkRes.json();
       if(checkData.isMember){
