@@ -11,12 +11,20 @@ module.exports = async (req, res) => {
     if (!session_id) return res.status(400).json({ error: "session_idがありません" });
 
     const session = await stripe.checkout.sessions.retrieve(session_id, {
-      expand: ["subscription"]
+      expand: ["subscription", "subscription.items.data.price"]
     });
 
     if (session.payment_status === "paid" || session.status === "complete") {
-      const planPriceId = session.line_items ? null : (session.subscription && session.subscription.items.data[0].price.id);
-      res.status(200).json({ ok: true, email: session.customer_details ? session.customer_details.email : null });
+      let plan = "plus";
+      const priceId = session.subscription && session.subscription.items.data[0].price.id;
+      if (priceId === "price_1TmlBbHxskKHNuykEuK4ghby") plan = "premium";
+      if (priceId === "price_1TmlCYHxskKHNuyk68EfgptO") plan = "master";
+
+      res.status(200).json({
+        ok: true,
+        email: session.customer_details ? session.customer_details.email : null,
+        plan: plan
+      });
     } else {
       res.status(200).json({ ok: false });
     }
