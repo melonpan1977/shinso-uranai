@@ -1095,14 +1095,10 @@ if(savedEmail){
                body: JSON.stringify({ email: savedEmail })
       });
       const checkData = await checkRes.json();
-      if(checkData.isMember){
-        const dailyBtn = document.getElementById('daily-fortune-btn');
-        if(dailyBtn) dailyBtn.style.display = 'inline-block';
-        if(btn){ btn.style.display = 'none'; }
-        const note = document.querySelector('.gateway-note');
-        if(note){ note.textContent = 'ご登録済みです。下のボタンから今日の運勢をご覧いただけます。'; }
-        return;
-      }
+if(checkData.isMember){
+  location.href = '/welcome.html';
+  return;
+}
     }
     if(btn){ btn.textContent = '処理中...'; }
     const res = await fetch('/api/create-checkout', {
