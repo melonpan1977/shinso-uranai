@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ご登録ありがとうございます｜心占SHINSO</title>
+<style>
+body{background:#0a0520;color:#fff;font-family:sans-serif;text-align:center;padding:40px 20px;}
+h1{color:#f2d78c;font-size:24px;margin-bottom:16px;}
+p{color:rgba(255,255,255,0.8);line-height:1.8;margin-bottom:16px;}
+input{width:100%;max-width:320px;padding:14px;border-radius:8px;border:1px solid #c9a227;background:#1a0840;color:#fff;font-size:16px;margin-bottom:16px;}
+.plan-badge{display:inline-block;background:#c9a227;color:#000;padding:4px 16px;border-radius:20px;font-weight:700;font-size:13px;margin-bottom:16px;}
+.feature-list{max-width:400px;margin:24px auto;text-align:left;}
+.feature-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#1a0840;border-radius:8px;margin-bottom:10px;}
+.feature-row.disabled{opacity:0.5;}
+.feature-name{font-size:15px;}
+button.act-btn{background:#c9a227;color:#000;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;}
+button.act-btn:disabled{background:#555;color:#999;cursor:not-allowed;}
+.soon{font-size:12px;color:#999;}
+#msg{margin-top:16px;color:#f88;white-space:pre-wrap;}
+#result{margin-top:24px;color:#fff;white-space:pre-wrap;line-height:1.8;text-align:left;background:#1a0840;padding:20px;border-radius:8px;display:none;}
+</style>
+</head>
+<body>
+<h1>ご登録ありがとうございます</h1>
+<p id="status">決済を確認しています...</p>
+<div id="form-area" style="display:none;">
+  <div class="plan-badge" id="plan-badge"></div>
+  <p>お名前と生年月日を入力してください。</p>
+  <input type="text" id="i-name" placeholder="お名前">
+  <br>
+  <input type="date" id="i-birth">
+  <div class="feature-list" id="feature-list"></div>
+  <p id="msg"></p>
+  <div id="result"></div>
+</div>
+<script>
+let memberEmail = null;
+let memberPlan = 'plus';
+
+const FEATURES = {
+  daily: { name: '毎日の運勢', plans: ['plus','premium','master'], action: getFortune },
+  predict: { name: 'AI未来予測', plans: ['premium','master'], action: null },
+  unlimited: { name: 'AI占い師 無制限', plans: ['master'], action: null },
+  detail: { name: '詳細分析', plans: ['master'], action: null }
+};
+
+function renderFeatures(){
+  const list = document.getElementById('feature-list');
+  list.innerHTML = '';
+  Object.keys(FEATURES).forEach(key=>{
+    const f = FEATURES[key];
+    const available = f.plans.includes(memberPlan);
+    const row = document.createElement('div');
+    row.className = 'feature-row' + (available ? '' : ' disabled');
+    const canUse = available && f.action;
+    row.innerHTML = `<span class="feature-name">${f.name}</span>` +
+      (canUse
+        ? `<button class="act-btn" onclick="FEATURES['${key}'].action()">見る</button>`
+        : (available ? `<span class="soon">近日公開</span>` : `<span class="soon">対象外</span>`));
+    list.appendChild(row);
+  });
+}
+
+(async function init(){
+  const params = new URLSearchParams(location.search);
+  const sessionId = params.get('session_id');
+  const statusEl = document.getElementById('status');
+  if(!sessionId){ statusEl.textContent = '決済情報が見つかりませんでした。'; return; }
+  try{
+    const res = await fetch('/api/verify-session?session_id=' + encodeURIComponent(sessionId));
+    const data = await res.json();
+    if(data.ok){
+      memberEmail = data.email;
+      memberPlan = data.plan || 'plus';
+      if(memberEmail) localStorage.setItem('shinso_member_email', memberEmail);
+      localStorage.setItem('shinso_member_plan', memberPlan);
+      statusEl.textContent = 'ご登録が完了しました。';
+      document.getElementById('plan-badge').textContent = memberPlan.toUpperCase();
+      document.getElementById('form-area').style.display = 'block';
+      renderFeatures();
+    }else{
+      statusEl.textContent = '決済の確認ができませんでした。反映まで数分かかる場合があります。';
+    }
+  }catch(e){
+    statusEl.textContent = '通信エラーが発生しました。';
+  }
+  history.replaceState({}, '', location.pathname);
+})();
+
+async function getFortune(){
+  const name = document.getElementById('i-name').value.trim();
+  const birth = document.getElementById('i-birth').value;
+  const msg = document.getElementById('msg');
+  const resultEl = document.getElementById('result');
+  if(!name || !birth){ msg.textContent = 'お名前と生年月日を入力してください。'; return; }
+  const email = memberEmail || localStorage.getItem('shinso_member_email');
+  if(!email){ msg.textContent = 'ご登録の確認ができません。'; return; }
+  msg.textContent = '占っています...';
+  resultEl.style.display = 'none';
+  try{
+    const res = await fetch('/api/daily-fortune', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name, birthday: birth, email })
+    });
+    const data = await res.json();
+    if(data.fortune){
+      msg.textContent = '';
+      resultEl.textContent = data.fortune;
+      resultEl.style.display = 'block';
+    }else{
+      msg.textContent = data.error || '取得に失敗しました。';
+    }
+  }catch(e){
+    msg.textContent = '通信エラーが発生しました。';
+  }
+}
+</script>
+</body>
+</html>
