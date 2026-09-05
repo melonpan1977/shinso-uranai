@@ -1,5 +1,4 @@
 const https = require("https");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 module.exports = async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -12,6 +11,7 @@ module.exports = async (req, res) => {
     if (!email) return res.status(400).json({ error: "メールアドレスがありません" });
     if (!name || !birthday) return res.status(400).json({ error: "名前と生年月日が必要です" });
 
+    const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
     const customers = await stripe.customers.list({ email, limit: 1 });
     if (customers.data.length === 0) {
       return res.status(403).json({ error: "ご登録が確認できません" });
@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
       max_tokens: 400,
       messages: [{
         role: "user",
-        content: `あなたは心占SHINSOの占い師です。神秘的で断定的な口調で、${name}さん(生年月日:${birthday})の${today}の運勢を占ってください。マークダウン記号(**、##、[]など)は一切使わないでください。150文字程度で、今日1日の運勢を具体的に伝えてください。「〜とされます」という表現で言い切りすぎないよう注意し、現在の傾向として伝えてください。`
+        content: `あなたは心占SHINSOの占い師です。神秘的で断定的な口調で、${name}さん(生年月日:${birthday})の${today}の運勢を占ってください。マークダウン記号(**、##、[]など)は一切使わないでください。絵文字・特殊記号は一切使用しないでください。150文字程度で、今日1日の運勢を具体的に伝えてください。「〜とされます」という表現で言い切りすぎないよう注意し、現在の傾向として伝えてください。`
       }]
     });
 
