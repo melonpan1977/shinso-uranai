@@ -1089,24 +1089,37 @@ async function openGate(){
   localStorage.setItem('shinso_profile', JSON.stringify(S));
   if(btn){ btn.disabled = true; btn.textContent = '確認中...'; }
   try{
-  const savedEmail = localStorage.getItem('shinso_member_email');
-if(savedEmail){
+    const savedEmail = localStorage.getItem('shinso_member_email');
+    if(savedEmail){
       const checkRes = await fetch('/api/check-member', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-               body: JSON.stringify({ email: savedEmail })
+        body: JSON.stringify({ email: savedEmail })
       });
       const checkData = await checkRes.json();
-if(checkData.isMember){
-  location.href = '/welcome.html';
-  return;
-}
+      if(checkData.isMember){
+        location.href = '/welcome.html';
+        return;
+      }
+    }
+    if(btn){ btn.textContent = 'トライアル資格を確認中...'; }
+    let trialDays = 7;
+    try{
+      const eligRes = await fetch('/api/check-trial-eligibility', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ email: S.email })
+      });
+      const eligData = await eligRes.json();
+      if(typeof eligData.trialDays === 'number'){ trialDays = eligData.trialDays; }
+    }catch(e){
+      trialDays = 7;
     }
     if(btn){ btn.textContent = '処理中...'; }
     const res = await fetch('/api/create-checkout', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ plan: selectedPlan })
+      body: JSON.stringify({ plan: selectedPlan, trialDays: trialDays })
     });
     const data = await res.json();
     if(data.url){ location.href = data.url; }
