@@ -18,6 +18,7 @@ button.act-btn{background:#c9a227;color:#000;border:none;padding:8px 18px;border
 button.act-btn:disabled{background:#555;color:#999;cursor:not-allowed;}
 .soon{font-size:12px;color:#999;}
 #msg{margin-top:16px;color:#f88;white-space:pre-wrap;}
+.limit-note{color:#c9a227;font-size:13px;margin-top:12px;}
 #result{margin-top:24px;color:#fff;white-space:pre-wrap;line-height:1.8;text-align:left;background:#1a0840;padding:20px;border-radius:8px;display:none;}
 </style>
 </head>
@@ -60,6 +61,14 @@ function renderFeatures(){
         : (available ? `<span class="soon">近日公開</span>` : `<span class="soon">対象外</span>`));
     list.appendChild(row);
   });
+}
+
+function showLimitNote(){
+  const resultEl = document.getElementById('result');
+  const note = document.createElement('p');
+  note.className = 'limit-note';
+  note.textContent = '※本日（または今月）はすでにご利用いただいた結果を表示しています。';
+  resultEl.appendChild(note);
 }
 
 (async function init(){
@@ -110,6 +119,18 @@ async function getFortune(){
   if(!name || !birth){ msg.textContent = 'お名前と生年月日を入力してください。'; return; }
   const email = memberEmail || localStorage.getItem('shinso_member_email');
   if(!email){ msg.textContent = 'ご登録の確認ができません。'; return; }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const savedDate = localStorage.getItem('shinso_fortune_date');
+  const savedResult = localStorage.getItem('shinso_fortune_result');
+  if(savedDate === today && savedResult){
+    msg.textContent = '';
+    resultEl.textContent = savedResult;
+    resultEl.style.display = 'block';
+    showLimitNote();
+    return;
+  }
+
   msg.textContent = '占っています...';
   resultEl.style.display = 'none';
   try{
@@ -123,6 +144,8 @@ async function getFortune(){
       msg.textContent = '';
       resultEl.textContent = data.fortune;
       resultEl.style.display = 'block';
+      localStorage.setItem('shinso_fortune_date', today);
+      localStorage.setItem('shinso_fortune_result', data.fortune);
     }else{
       msg.textContent = data.error || '取得に失敗しました。';
     }
@@ -140,6 +163,19 @@ async function getPrediction(){
   if(!profileRaw){ msg.textContent = '鑑定データが見つかりません。もう一度最初から鑑定をお試しください。'; return; }
   let profile;
   try{ profile = JSON.parse(profileRaw); }catch(e){ msg.textContent = '鑑定データの読み込みに失敗しました。'; return; }
+
+  const now = new Date();
+  const thisMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  const savedMonth = localStorage.getItem('shinso_prediction_month');
+  const savedResult = localStorage.getItem('shinso_prediction_result');
+  if(savedMonth === thisMonth && savedResult){
+    msg.textContent = '';
+    resultEl.innerHTML = savedResult;
+    resultEl.style.display = 'block';
+    showLimitNote();
+    return;
+  }
+
   msg.textContent = '今月の運命を読み解いています...（少し時間がかかります）';
   resultEl.style.display = 'none';
   try{
@@ -161,6 +197,8 @@ async function getPrediction(){
       });
       resultEl.innerHTML = html;
       resultEl.style.display = 'block';
+      localStorage.setItem('shinso_prediction_month', thisMonth);
+      localStorage.setItem('shinso_prediction_result', html);
     }else{
       msg.textContent = data.error || '取得に失敗しました。';
     }
@@ -178,6 +216,18 @@ async function getDetailedAnalysis(){
   if(!profileRaw){ msg.textContent = '鑑定データが見つかりません。もう一度最初から鑑定をお試しください。'; return; }
   let profile;
   try{ profile = JSON.parse(profileRaw); }catch(e){ msg.textContent = '鑑定データの読み込みに失敗しました。'; return; }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const savedDate = localStorage.getItem('shinso_analysis_date');
+  const savedResult = localStorage.getItem('shinso_analysis_result');
+  if(savedDate === today && savedResult){
+    msg.textContent = '';
+    resultEl.innerHTML = savedResult;
+    resultEl.style.display = 'block';
+    showLimitNote();
+    return;
+  }
+
   msg.textContent = '汝の深層を読み解いています...（少し時間がかかります）';
   resultEl.style.display = 'none';
   try{
@@ -199,6 +249,8 @@ async function getDetailedAnalysis(){
       html += '<p style="color:#f2d78c;font-weight:700;">' + data.overall + '</p>';
       resultEl.innerHTML = html;
       resultEl.style.display = 'block';
+      localStorage.setItem('shinso_analysis_date', today);
+      localStorage.setItem('shinso_analysis_result', html);
     }else{
       msg.textContent = data.error || '取得に失敗しました。';
     }
