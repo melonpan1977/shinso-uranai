@@ -1181,6 +1181,23 @@ async function analyzePalm() {
   const input = document.getElementById('palm-input');
   if (!input.files || !input.files[0]) return;
 
+  const today = new Date().toISOString().slice(0, 10);
+  const savedDate = localStorage.getItem('shinso_palm_date');
+  const savedResult = localStorage.getItem('shinso_palm_result');
+
+  if (savedDate === today && savedResult) {
+    document.getElementById('palm-btn').style.display = 'none';
+    document.getElementById('palm-text').textContent = savedResult;
+    document.getElementById('palm-result').style.display = 'block';
+    const note = document.createElement('p');
+    note.style.color = '#c9a227';
+    note.style.fontSize = '13px';
+    note.style.marginTop = '12px';
+    note.textContent = '本日はすでにご利用いただきました。また明日お試しください。';
+    document.getElementById('palm-result').appendChild(note);
+    return;
+  }
+
   document.getElementById('palm-btn').style.display = 'none';
   document.getElementById('palm-loading').style.display = 'block';
   document.getElementById('palm-result').style.display = 'none';
@@ -1213,8 +1230,13 @@ async function analyzePalm() {
         body: JSON.stringify({ imageBase64: base64, mediaType: 'image/jpeg' })
       });
       const data = await res.json();
-      document.getElementById('palm-text').textContent = data.reading || data.error;
+      const resultText = data.reading || data.error;
+      document.getElementById('palm-text').textContent = resultText;
       document.getElementById('palm-result').style.display = 'block';
+      if (data.reading) {
+        localStorage.setItem('shinso_palm_date', today);
+        localStorage.setItem('shinso_palm_result', data.reading);
+      }
     } catch(e) {
       document.getElementById('palm-text').textContent = 'エラー: ' + e.message;
       document.getElementById('palm-result').style.display = 'block';
@@ -1226,6 +1248,7 @@ async function analyzePalm() {
 
   img.src = URL.createObjectURL(file);
 }
+  
 </script>
 </body>
 </html>
