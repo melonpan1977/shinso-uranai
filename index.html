@@ -927,7 +927,6 @@ function p1next(){
   S.birth=document.getElementById('i-birth').value; 
   S.email=document.getElementById('i-email').value.trim();
   if(!S.name||!S.birth){flash('名と生年月日を記せ');return;}
-  if(!S.email||!S.email.includes('@')){flash('正しいメールアドレスを記せ');return;}
   S.gender=document.getElementById('i-gender').value;
   S.time=document.getElementById('i-time').value;gp(2);
 }
