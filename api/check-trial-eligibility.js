@@ -14,37 +14,23 @@ module.exports = async (req, res) => {
     const customers = await stripe.customers.list({ email, limit: 10 });
 
     if (customers.data.length === 0) {
-      // 初めての顧客：フルの7日間トライアル
       return res.status(200).json({ trialDays: TRIAL_DAYS, isNewCustomer: true });
     }
 
-    // このメールアドレスに紐づく全顧客の、全サブスクリプションを調べる
-    let earliestStart = null;
+    let hasAnySubscription = false;
     for (const customer of customers.data) {
-      const subs = await stripe.subscriptions.list({ customer: customer.id, status: "all", limit: 20 });
-      for (const sub of subs.data) {
-        // created はUNIXタイムスタンプ（秒）
-        if (earliestStart === null || sub.created < earliestStart) {
-          earliestStart = sub.created;
-        }
+      const subs = await stripe.subscriptions.list({ customer: customer.id, status: "all", limit: 1 });
+      if (subs.data.length > 0) {
+        hasAnySubscription = true;
+        break;
       }
     }
 
-    if (earliestStart === null) {
-      // 顧客レコードはあるが契約履歴なし：フルの7日間トライアル
-      return res.status(200).json({ trialDays: TRIAL_DAYS, isNewCustomer: true });
-    }
-
-    const now = Math.floor(Date.now() / 1000);
-    const elapsedSeconds = now - earliestStart;
-    const elapsedDays = Math.floor(elapsedSeconds / 86400);
-    const remainingDays = TRIAL_DAYS - elapsedDays;
-
-    if (remainingDays <= 0) {
+    if (hasAnySubscription) {
       return res.status(200).json({ trialDays: 0, isNewCustomer: false });
     }
 
-    return res.status(200).json({ trialDays: remainingDays, isNewCustomer: false });
+    return res.status(200).json({ trialDays: TRIAL_DAYS, isNewCustomer: true });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
