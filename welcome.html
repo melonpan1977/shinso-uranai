@@ -8,7 +8,8 @@
 body{background:#0a0520;color:#fff;font-family:sans-serif;text-align:center;padding:40px 20px;}
 h1{color:#f2d78c;font-size:24px;margin-bottom:16px;}
 p{color:rgba(255,255,255,0.8);line-height:1.8;margin-bottom:16px;}
-input{width:100%;max-width:320px;padding:14px;border-radius:8px;border:1px solid #c9a227;background:#1a0840;color:#fff;font-size:16px;margin-bottom:16px;}
+input,textarea{width:100%;max-width:320px;padding:14px;border-radius:8px;border:1px solid #c9a227;background:#1a0840;color:#fff;font-size:16px;margin-bottom:16px;font-family:inherit;}
+textarea{max-width:400px;min-height:100px;resize:vertical;}
 .plan-badge{display:inline-block;background:#c9a227;color:#000;padding:4px 16px;border-radius:20px;font-weight:700;font-size:13px;margin-bottom:16px;}
 .feature-list{max-width:400px;margin:24px auto;text-align:left;}
 .feature-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#1a0840;border-radius:8px;margin-bottom:10px;}
@@ -19,7 +20,9 @@ button.act-btn:disabled{background:#555;color:#999;cursor:not-allowed;}
 .soon{font-size:12px;color:#999;}
 #msg{margin-top:16px;color:#f88;white-space:pre-wrap;}
 .limit-note{color:#c9a227;font-size:13px;margin-top:12px;}
-#result{margin-top:24px;color:#fff;white-space:pre-wrap;line-height:1.8;text-align:left;background:#1a0840;padding:20px;border-radius:8px;display:none;}
+#result{margin-top:24px;color:#fff;white-space:pre-wrap;line-height:1.8;text-align:left;background:#1a0840;padding:20px;border-radius:8px;display:none;max-width:500px;margin-left:auto;margin-right:auto;}
+#consult-area{display:none;max-width:400px;margin:16px auto;}
+button.consult-btn{background:#c9a227;color:#000;border:none;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -32,6 +35,12 @@ button.act-btn:disabled{background:#555;color:#999;cursor:not-allowed;}
   <br>
   <input type="date" id="i-birth">
   <div class="feature-list" id="feature-list"></div>
+  <div id="consult-area">
+    <p>今、心にあることを自由にお書きください。</p>
+    <textarea id="i-question" placeholder="ご相談内容をご自由にお書きください（文字数の制限はありません）"></textarea>
+    <br>
+    <button class="consult-btn" onclick="getConsultation()">占い師に相談する</button>
+  </div>
   <p id="msg"></p>
   <div id="result"></div>
 </div>
@@ -42,7 +51,7 @@ let memberPlan = 'plus';
 const FEATURES = {
   daily: { name: '毎日の運勢', plans: ['plus','premium','master'], action: getFortune },
   predict: { name: 'AI未来予測', plans: ['premium','master'], action: getPrediction },
-  unlimited: { name: 'AI占い師 無制限', plans: ['master'], action: null },
+  unlimited: { name: 'AI占い師 無制限', plans: ['master'], action: showConsultForm },
   detail: { name: '詳細分析', plans: ['master'], action: getDetailedAnalysis }
 };
 
@@ -116,6 +125,7 @@ async function getFortune(){
   const birth = document.getElementById('i-birth').value;
   const msg = document.getElementById('msg');
   const resultEl = document.getElementById('result');
+  document.getElementById('consult-area').style.display = 'none';
   if(!name || !birth){ msg.textContent = 'お名前と生年月日を入力してください。'; return; }
   const email = memberEmail || localStorage.getItem('shinso_member_email');
   if(!email){ msg.textContent = 'ご登録の確認ができません。'; return; }
@@ -157,6 +167,7 @@ async function getFortune(){
 async function getPrediction(){
   const msg = document.getElementById('msg');
   const resultEl = document.getElementById('result');
+  document.getElementById('consult-area').style.display = 'none';
   const email = memberEmail || localStorage.getItem('shinso_member_email');
   if(!email){ msg.textContent = 'ご登録の確認ができません。'; return; }
   const profileRaw = localStorage.getItem('shinso_profile');
@@ -210,6 +221,7 @@ async function getPrediction(){
 async function getDetailedAnalysis(){
   const msg = document.getElementById('msg');
   const resultEl = document.getElementById('result');
+  document.getElementById('consult-area').style.display = 'none';
   const email = memberEmail || localStorage.getItem('shinso_member_email');
   if(!email){ msg.textContent = 'ご登録の確認ができません。'; return; }
   const profileRaw = localStorage.getItem('shinso_profile');
@@ -251,6 +263,77 @@ async function getDetailedAnalysis(){
       resultEl.style.display = 'block';
       localStorage.setItem('shinso_analysis_date', today);
       localStorage.setItem('shinso_analysis_result', html);
+    }else{
+      msg.textContent = data.error || '取得に失敗しました。';
+    }
+  }catch(e){
+    msg.textContent = '通信エラーが発生しました。';
+  }
+}
+
+function getTodayConsultCount(){
+  const today = new Date().toISOString().slice(0, 10);
+  const savedDate = localStorage.getItem('shinso_consult_date');
+  if(savedDate !== today){
+    localStorage.setItem('shinso_consult_date', today);
+    localStorage.setItem('shinso_consult_count', '0');
+    return 0;
+  }
+  return parseInt(localStorage.getItem('shinso_consult_count') || '0', 10);
+}
+
+function showConsultForm(){
+  const msg = document.getElementById('msg');
+  const resultEl = document.getElementById('result');
+  resultEl.style.display = 'none';
+  resultEl.innerHTML = '';
+  msg.textContent = '';
+  const count = getTodayConsultCount();
+  const consultArea = document.getElementById('consult-area');
+  if(count >= 3){
+    consultArea.style.display = 'none';
+    msg.textContent = '本日のご相談回数（1日3回まで）はすでにご利用いただきました。また明日お試しください。';
+    return;
+  }
+  consultArea.style.display = 'block';
+  msg.textContent = '本日あと ' + (3 - count) + ' 回ご相談いただけます。';
+}
+
+async function getConsultation(){
+  const msg = document.getElementById('msg');
+  const resultEl = document.getElementById('result');
+  const question = document.getElementById('i-question').value.trim();
+  if(!question){ msg.textContent = 'ご相談内容をお書きください。'; return; }
+
+  const count = getTodayConsultCount();
+  if(count >= 3){
+    msg.textContent = '本日のご相談回数（1日3回まで）はすでにご利用いただきました。また明日お試しください。';
+    document.getElementById('consult-area').style.display = 'none';
+    return;
+  }
+
+  const email = memberEmail || localStorage.getItem('shinso_member_email');
+  if(!email){ msg.textContent = 'ご登録の確認ができません。'; return; }
+  const profileRaw = localStorage.getItem('shinso_profile');
+  if(!profileRaw){ msg.textContent = '鑑定データが見つかりません。もう一度最初から鑑定をお試しください。'; return; }
+  let profile;
+  try{ profile = JSON.parse(profileRaw); }catch(e){ msg.textContent = '鑑定データの読み込みに失敗しました。'; return; }
+
+  msg.textContent = '汝の問いに向き合っています...';
+  resultEl.style.display = 'none';
+  try{
+    const res = await fetch('/api/ai-consultation', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, profile, question })
+    });
+    const data = await res.json();
+    if(data.answer){
+      localStorage.setItem('shinso_consult_count', String(count + 1));
+      msg.textContent = '本日あと ' + (3 - (count + 1)) + ' 回ご相談いただけます。';
+      resultEl.textContent = data.answer;
+      resultEl.style.display = 'block';
+      document.getElementById('i-question').value = '';
     }else{
       msg.textContent = data.error || '取得に失敗しました。';
     }
