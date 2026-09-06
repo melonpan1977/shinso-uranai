@@ -17,6 +17,7 @@
     { "src": "/api/future-prediction", "dest": "/api/future-prediction" },
     { "src": "/api/detailed-analysis", "dest": "/api/detailed-analysis" },
     { "src": "/api/check-trial-eligibility", "dest": "/api/check-trial-eligibility" },
+    { "src": "/api/ai-consultation", "dest": "/api/ai-consultation" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
